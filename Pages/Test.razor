@@ -1,0 +1,48 @@
+﻿@page "/test/{Dex:int}"
+@using PokéToolsWeb.Components
+@using PokéToolsWeb.Models
+@inject HttpClient Http
+
+@if (pokemon != null)
+{
+    <div class="card">
+        <img src="@pokemon.IconUrl" alt="@pokemon.Name" />
+    </div>
+
+    <div class="stat-row"><span>@pokemon.HP</span><ColorBar Value="@pokemon.HP" /></div>
+    <div class="stat-row"><span>@pokemon.Attack</span><ColorBar Value="@pokemon.Attack" /></div>
+    <div class="stat-row"><span>@pokemon.Defense</span><ColorBar Value="@pokemon.Defense" /></div>
+    <div class="stat-row"><span>@pokemon.SpAtk</span><ColorBar Value="@pokemon.SpAtk" /></div>
+    <div class="stat-row"><span>@pokemon.SpDef</span><ColorBar Value="@pokemon.SpDef" /></div>
+    <div class="stat-row"><span>@pokemon.Speed</span><ColorBar Value="@pokemon.Speed" /></div>
+}
+<style>
+    .stat-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 4px 0;
+    }
+
+        .stat-row span {
+            width: 32px; /* fixe l'espace réservé à la valeur */
+            text-align: right;
+            font-weight: bold;
+        }
+</style>
+
+
+@code {
+    [Parameter]
+    public int Dex { get; set; }
+
+    private List<Pokemon> allPokemons = new();
+    private Pokemon? pokemon;
+
+    protected override async Task OnInitializedAsync()
+    {
+        allPokemons = await Http.GetFromJsonAsync<List<Pokemon>>("https://localhost:7206/api/Pokemons") ?? new List<Pokemon>();
+        pokemon = allPokemons.FirstOrDefault(p => p.Dex == Dex);
+        StateHasChanged();
+    }
+}

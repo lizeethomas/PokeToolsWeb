@@ -1,0 +1,154 @@
+﻿@page "/"
+@inject HttpClient Http
+@using PokéToolsWeb.Models
+
+<h1>Pokémon Viewer</h1>
+
+@if (pokemons is null)
+{
+    <p>Chargement...</p>
+}
+else
+{
+    <div class="filters">
+        <h3>Filtrer par type :</h3>
+        <button @onclick="ClearAllTypes">Tout déselectionner</button>
+        <div class="type-checkboxes">
+            @foreach (var type in availableTypes)
+            {
+                <label>
+                    <input type="checkbox"
+                           checked="@selectedTypes.Contains(type)"
+                    @onchange="e => ToggleTypeFilter(type, (bool)e.Value)"
+                           disabled="@(selectedTypes.Count >= 2 && !selectedTypes.Contains(type))" />
+                    @type
+                </label>
+            }
+        </div>
+
+        <h3>Filtrer par génération :</h3>
+        <button @onclick="SelectAllGens">Tout sélectionner</button>
+        <button @onclick="ClearAllGens">Tout déselectionner</button>
+        <div class="gen-checkboxes">
+            @foreach (var gen in availableGens)
+            {
+                <label>
+                    <input type="checkbox"
+                           checked="@selectedGens.Contains(gen)"
+                    @onchange="e => ToggleGenFilter(gen, (bool)e.Value)" />
+                    Gen @gen
+                </label>
+            }
+        </div>
+    </div>
+
+    <div class="card-container">
+        @foreach (var pokemon in pokemons)
+        {
+            <div class="card">
+                <img src="@pokemon.IconUrl" alt="@pokemon.Name" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Pokemon> allPokemons = new();
+    private List<Pokemon> pokemons = new();
+
+    private HashSet<string> selectedTypes = new();
+    private List<string> availableTypes = new();
+
+    private HashSet<int> selectedGens = new();
+    private List<int> availableGens = Enumerable.Range(1, 9).ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        allPokemons = await Http.GetFromJsonAsync<List<Pokemon>>("https://localhost:7206/api/Pokemons") ?? new List<Pokemon>();
+
+        availableTypes = allPokemons
+            .SelectMany(p => new[] { p.Type1, p.Type2 })
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .Distinct()
+            .OrderBy(t => t)
+            .ToList();
+
+        selectedGens = new HashSet<int>(availableGens); 
+
+        ApplyFilters();
+    }
+
+    private void ToggleTypeFilter(string type, bool isChecked)
+    {
+        if (isChecked)
+        {
+            if (selectedTypes.Count < 2)
+                selectedTypes.Add(type);
+        }
+        else
+        {
+            selectedTypes.Remove(type);
+        }
+
+        ApplyFilters();
+    }
+
+    private void ClearAllTypes()
+    {
+        selectedTypes.Clear();
+        ApplyFilters();
+    }
+
+    private void ToggleGenFilter(int gen, bool isChecked)
+    {
+        if (isChecked)
+            selectedGens.Add(gen);
+        else
+            selectedGens.Remove(gen);
+
+        ApplyFilters();
+    }
+
+    private void ClearAllGens()
+    {
+        selectedGens.Clear();
+        ApplyFilters();
+    }
+
+    private void SelectAllGens()
+    {
+        selectedGens = new HashSet<int>(availableGens);
+        ApplyFilters();
+    }
+
+    private void ApplyFilters()
+    {
+        IEnumerable<Pokemon> filtered = allPokemons;
+
+        if (selectedTypes.Count == 1)
+        {
+            var type = selectedTypes.First();
+            filtered = filtered.Where(p => p.Type1 == type || p.Type2 == type);
+        }
+        else if (selectedTypes.Count == 2)
+        {
+            var typePair = selectedTypes.ToHashSet();
+            filtered = filtered.Where(p =>
+            {
+                var pokemonTypes = new HashSet<string> { p.Type1, p.Type2 };
+                return pokemonTypes.SetEquals(typePair);
+            });
+        }
+
+        if (selectedGens.Count > 0)
+        {
+            filtered = filtered.Where(p => selectedGens.Contains(p.Gen));
+        }
+        else
+        {
+            filtered = Enumerable.Empty<Pokemon>(); 
+        }
+
+        pokemons = filtered.ToList();
+    }
+}
