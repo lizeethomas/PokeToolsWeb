@@ -70,3 +70,26 @@ body {
         height: auto;
         display: block;
     }
+
+.popup {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+    padding: 10px;
+    border-radius: 8px;
+    z-index: 100;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0;
+}
+
+    .stat-row span {
+        width: 32px;
+        text-align: right;
+        font-weight: bold;
+    }
