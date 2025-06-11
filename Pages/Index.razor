@@ -3,6 +3,9 @@
 @using PokéToolsWeb.Models
 @using PokéToolsWeb.Components
 
+@using Microsoft.JSInterop
+@inject IJSRuntime JS;
+
 <h1>Pokémon Viewer</h1>
 
 @if (pokemons is null)
@@ -43,35 +46,43 @@ else
         </div>
     </div>
 
-    <div class="card-container">
-        @foreach (var pokemon in pokemons)
-        {
-            <div class="card"
-            @onmouseover="@(() => StartHover(pokemon))"
-            @onmouseout="CancelHover"
-            @onmousemove="e => UpdateMousePosition(e)">
-                <img src="@pokemon.IconUrl" alt="@pokemon.Name" />
+    <div class="page-layout">
+        <div class="pokemon-panel">
+            <div class="card-container">
+                @foreach (var pokemon in pokemons)
+                {
+                    <div class="card"
+                        id="@pokemon.Dex"
+                        @onmouseover="@(() => StartHover(pokemon))"
+                        @onmouseout="CancelHover"
+                        @onmousemove="e => UpdateMousePosition(e)">
+                        <img src="@pokemon.IconUrl" alt="@pokemon.Name" />
+                    </div>
+                }
             </div>
-        }
+        </div>
+
+        <div class="team" id="teamZone">
+            <h3>Équipe</h3>
+            <ul>
+                @foreach (var member in team)
+                {
+                    <li>@member.Name</li>
+                }
+            </ul>
+        </div>
     </div>
 
     @if (hoveredPokemon != null && showPopup)
     {
-        <div class="popup" style="top:@popupTopPx; left:@popupLeftPx;">
-            <div class="stat-row"><span>@("#" + hoveredPokemon.Dex)</span><span>@(hoveredPokemon.Name)</span></div>
-            <div class="stat-row"><span>@hoveredPokemon.HP</span><ColorBar Value="@hoveredPokemon.HP" /></div>
-            <div class="stat-row"><span>@hoveredPokemon.Attack</span><ColorBar Value="@hoveredPokemon.Attack" /></div>
-            <div class="stat-row"><span>@hoveredPokemon.Defense</span><ColorBar Value="@hoveredPokemon.Defense" /></div>
-            <div class="stat-row"><span>@hoveredPokemon.SpAtk</span><ColorBar Value="@hoveredPokemon.SpAtk" /></div>
-            <div class="stat-row"><span>@hoveredPokemon.SpDef</span><ColorBar Value="@hoveredPokemon.SpDef" /></div>
-            <div class="stat-row"><span>@hoveredPokemon.Speed</span><ColorBar Value="@hoveredPokemon.Speed" /></div>
-        </div>
+        <PopUp leftPx="@popupLeftPx" topPx="@popupTopPx" pokemon="@hoveredPokemon"/>
     }
 }
 
 @code {
     private List<Pokemon> allPokemons = new();
     private List<Pokemon> pokemons = new();
+    private List<Pokemon> team = new();
 
     private HashSet<string> selectedTypes = new();
     private List<string> availableTypes = new();
@@ -83,6 +94,8 @@ else
     private Timer? hoverTimer;
     private string popupTopPx = "0px";
     private string popupLeftPx = "0px";
+
+    
 
     protected override async Task OnInitializedAsync()
     {
@@ -98,6 +111,15 @@ else
         selectedGens = new HashSet<int>(availableGens);
 
         ApplyFilters();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            //await JS.InvokeVoidAsync("dragAndDrop", ".draggable");
+            //await JS.InvokeVoidAsync("dropZone", ".dropzone");
+        }
     }
 
     private void StartHover(Pokemon p)

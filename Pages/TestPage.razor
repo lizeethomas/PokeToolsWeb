@@ -1,0 +1,19 @@
+﻿@page "/test"
+@using Microsoft.JSInterop
+@inject IJSRuntime JS;
+
+<h3>TestPage</h3>
+
+<div class="main" width="500px" height="500px">
+    <div class="draggable"> Draggable element</div>
+    <div class="dropzone"> Dropzone</div>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JS.InvokeVoidAsync("dragAndDrop", ".draggable");
+        await JS.InvokeVoidAsync("dropZone", ".dropzone");
+    }
+    
+}

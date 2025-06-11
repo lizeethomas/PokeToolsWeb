@@ -1,0 +1,25 @@
+﻿@using PokéToolsWeb.Models
+
+<div class="popup" style="top:@topPx; left:@leftPx;">
+    <div class="stat-row"><span>@("#" + pokemon.Dex)</span><span>@(pokemon.Name)</span></div>
+
+    <hr class="separator" />
+
+    <div class="stat-row"><span>@pokemon.HP</span><ColorBar Value="@pokemon.HP" /></div>
+    <div class="stat-row"><span>@pokemon.Attack</span><ColorBar Value="@pokemon.Attack" /></div>
+    <div class="stat-row"><span>@pokemon.Defense</span><ColorBar Value="@pokemon.Defense" /></div>
+    <div class="stat-row"><span>@pokemon.SpAtk</span><ColorBar Value="@pokemon.SpAtk" /></div>
+    <div class="stat-row"><span>@pokemon.SpDef</span><ColorBar Value="@pokemon.SpDef" /></div>
+    <div class="stat-row"><span>@pokemon.Speed</span><ColorBar Value="@pokemon.Speed" /></div>
+</div>
+
+@code {
+    [Parameter]
+    public Pokemon pokemon { get; set; }
+
+    [Parameter]
+    public string topPx { get; set; }
+
+    [Parameter]
+    public string leftPx { get; set; }
+}
