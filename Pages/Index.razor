@@ -54,6 +54,7 @@ else
                     <div class="card"
                         id="@pokemon.Dex"
                         @onmouseover="@(() => StartHover(pokemon))"
+                        @onclick="@(() => OnPokemonSelected(pokemon))"
                         @onmouseout="CancelHover"
                         @onmousemove="e => UpdateMousePosition(e)">
                         <img src="@pokemon.IconUrl" alt="@pokemon.Name" />
@@ -62,12 +63,19 @@ else
             </div>
         </div>
 
-        <div class="team" id="teamZone">
-            <h3>Équipe</h3>
+        <div class="team-panel">
+            <h3>Team</h3>
             <ul>
-                @foreach (var member in team)
+                @foreach (var pokemon in team)
                 {
-                    <li>@member.Name</li>
+                    <div class="card"
+                         id="@pokemon.Dex"
+                        @onmouseover="@(() => StartHover(pokemon))"
+                        @onclick="@(() => OnPokemonDeselected(pokemon))"
+                        @onmouseout="CancelHover"
+                        @onmousemove="e => UpdateMousePosition(e)">
+                        <img src="@pokemon.IconUrl" alt="@pokemon.Name" />
+                    </div>
                 }
             </ul>
         </div>
@@ -95,7 +103,7 @@ else
     private string popupTopPx = "0px";
     private string popupLeftPx = "0px";
 
-    
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -151,6 +159,25 @@ else
         {
             StateHasChanged();
         }
+    }
+
+    private void OnPokemonSelected(Pokemon p)
+    {
+        allPokemons.Remove(p);
+        team.Add(p);
+        CancelHover();
+        ApplyFilters();
+        StateHasChanged();
+    }
+
+    private void OnPokemonDeselected(Pokemon p)
+    {
+        team.Remove(p);
+        allPokemons.Add(p);
+        allPokemons = allPokemons.OrderBy(pkm => pkm.Dex).ToList();
+        CancelHover();
+        ApplyFilters();
+        StateHasChanged();
     }
 
     private void ToggleTypeFilter(string type, bool isChecked)
