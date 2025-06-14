@@ -1,0 +1,18 @@
+﻿@using PokéToolsWeb.Models
+
+<div class="card"
+     id="@Pokemon.Dex"
+    @onmouseover="@(() => StartHover?.Invoke(Pokemon))"
+    @onclick="@(() => OnClick.InvokeAsync(Pokemon))"
+    @onmouseout="() => CancelHover?.Invoke()"
+    @onmousemove="UpdateMousePosition">
+    <img src="@Pokemon.IconUrl" alt="@Pokemon.Name" />
+</div>
+
+@code {
+    [Parameter] public Pokemon Pokemon { get; set; }
+    [Parameter] public EventCallback<Pokemon> OnClick { get; set; }
+    [Parameter] public Action<Pokemon>? StartHover { get; set; }
+    [Parameter] public Action? CancelHover { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> UpdateMousePosition { get; set; }
+}

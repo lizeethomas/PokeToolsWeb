@@ -3,9 +3,6 @@
 @using PokéToolsWeb.Models
 @using PokéToolsWeb.Components
 
-@using Microsoft.JSInterop
-@inject IJSRuntime JS;
-
 <h1>Pokémon Viewer</h1>
 
 @if (pokemons is null)
@@ -15,8 +12,10 @@
 else
 {
     <div class="filters">
-        <h3>Filtrer par type :</h3>
-        <button @onclick="ClearAllTypes">Tout déselectionner</button>
+        <div>
+            <h3>Filtrer par type :</h3>
+            <button @onclick="ClearAllTypes">Tout déselectionner</button>
+        </div>
         <div class="type-checkboxes">
             @foreach (var type in availableTypes)
             {
@@ -29,10 +28,10 @@ else
                 </label>
             }
         </div>
+        
 
         <h3>Filtrer par génération :</h3>
         <button @onclick="SelectAllGens">Tout sélectionner</button>
-        <button @onclick="ClearAllGens">Tout déselectionner</button>
         <div class="gen-checkboxes">
             @foreach (var gen in availableGens)
             {
@@ -44,42 +43,65 @@ else
                 </label>
             }
         </div>
+        <button @onclick="ClearAllGens">Tout déselectionner</button>
     </div>
 
     <div class="page-layout">
-        <div class="pokemon-panel">
-            <div class="card-container">
-                @foreach (var pokemon in pokemons)
+        <div class="left-panel">
+            <div class="pokemon-panel">
+                <div class="card-container">
+                    @foreach (var pokemon in pokemons)
+                    {
+                        <PokemonCard Pokemon="@pokemon"
+                            CancelHover="CancelHover"
+                            OnClick="OnPokemonSelected"
+                            StartHover="StartHover"
+                            UpdateMousePosition="UpdateMousePosition">
+                        </PokemonCard>
+                    }
+                </div>
+            </div>
+            <div class="pagination-controls">
+                <button @onclick="PreviousPage" disabled="@(currentPage <= 1)">Page précédente</button>
+                <span>Page @currentPage sur @totalPages</span>
+                <button @onclick="NextPage" disabled="@(currentPage >= totalPages)">Page suivante</button>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="team-panel">
+                <h3>Team (@($"{team.Count()}/6"))</h3>
+                <ul>
+                    @foreach (var pokemon in team)
+                    {
+                        <PokemonCard Pokemon="@pokemon"
+                            CancelHover="CancelHover"
+                            OnClick="OnPokemonDeselected"
+                            StartHover="StartHover"
+                            UpdateMousePosition="UpdateMousePosition">
+                        </PokemonCard>
+                    }
+                </ul>
+            </div>
+            <div class="chart-panel">
+                @if(availableTypes.Any())
                 {
-                    <div class="card"
-                        id="@pokemon.Dex"
-                        @onmouseover="@(() => StartHover(pokemon))"
-                        @onclick="@(() => OnPokemonSelected(pokemon))"
-                        @onmouseout="CancelHover"
-                        @onmousemove="e => UpdateMousePosition(e)">
-                        <img src="@pokemon.IconUrl" alt="@pokemon.Name" />
-                    </div>
+                    @foreach(var t in availableTypes)
+                    {
+                        <p>@($"{t} : {0}")</p>
+                    }
                 }
             </div>
         </div>
-
-        <div class="team-panel">
-            <h3>Team</h3>
-            <ul>
-                @foreach (var pokemon in team)
-                {
-                    <div class="card"
-                         id="@pokemon.Dex"
-                        @onmouseover="@(() => StartHover(pokemon))"
-                        @onclick="@(() => OnPokemonDeselected(pokemon))"
-                        @onmouseout="CancelHover"
-                        @onmousemove="e => UpdateMousePosition(e)">
-                        <img src="@pokemon.IconUrl" alt="@pokemon.Name" />
-                    </div>
-                }
-            </ul>
-        </div>
     </div>
+
+    /*
+    <div>
+        @if(team.Any())
+        {
+            <TypeChart pokemon="@(team.First())" defensiveTypeChart="@(teamDefensiveTypeCharts.First())"></TypeChart>
+        }
+    </div>
+    */
 
     @if (hoveredPokemon != null && showPopup)
     {
@@ -92,6 +114,9 @@ else
     private List<Pokemon> pokemons = new();
     private List<Pokemon> team = new();
 
+    private List<DefensiveTypeChart> teamDefensiveTypeCharts = new();
+    private Dictionary<string, double> teamDefensiveTypeChart = new();
+
     private HashSet<string> selectedTypes = new();
     private List<string> availableTypes = new();
     private HashSet<int> selectedGens = new();
@@ -103,7 +128,9 @@ else
     private string popupTopPx = "0px";
     private string popupLeftPx = "0px";
 
-
+    private int currentPage = 1;
+    private const int pageSize = 66; 
+    private int totalPages = 1;
 
     protected override async Task OnInitializedAsync()
     {
@@ -125,8 +152,10 @@ else
     {
         if(firstRender)
         {
-            //await JS.InvokeVoidAsync("dragAndDrop", ".draggable");
-            //await JS.InvokeVoidAsync("dropZone", ".dropzone");
+            availableTypes.ForEach(t =>
+            {
+                teamDefensiveTypeChart.Add(t, 0);
+            });
         }
     }
 
@@ -161,13 +190,17 @@ else
         }
     }
 
-    private void OnPokemonSelected(Pokemon p)
+    private async Task OnPokemonSelected(Pokemon p)
     {
-        allPokemons.Remove(p);
-        team.Add(p);
-        CancelHover();
-        ApplyFilters();
-        StateHasChanged();
+        if(team.Count() < 6)
+        {
+            allPokemons.Remove(p);
+            await GetDefensiveTypeChart(p.Dex);
+            team.Add(p);
+            CancelHover();
+            ApplyFilters();
+            StateHasChanged();
+        }
     }
 
     private void OnPokemonDeselected(Pokemon p)
@@ -179,6 +212,17 @@ else
         ApplyFilters();
         StateHasChanged();
     }
+
+    private async Task GetDefensiveTypeChart(int dex)
+    {
+        teamDefensiveTypeCharts.Add(await Http.GetFromJsonAsync<DefensiveTypeChart>($"https://localhost:7206/api/Type/defense/{dex}") ?? new DefensiveTypeChart());
+    }
+
+    private void EvaluateTeamDefensiveTypeChart()
+    {
+
+    }
+
 
     private void ToggleTypeFilter(string type, bool isChecked)
     {
@@ -248,9 +292,40 @@ else
         }
         else
         {
-            filtered = Enumerable.Empty<Pokemon>(); 
+            filtered = Enumerable.Empty<Pokemon>();
         }
 
-        pokemons = filtered.ToList();
+        var filteredList = filtered.ToList();
+
+        totalPages = (int)Math.Ceiling(filteredList.Count / (double)pageSize);
+        if (currentPage > totalPages)
+            currentPage = totalPages > 0 ? totalPages : 1;
+
+        pokemons = filteredList
+            .Skip((currentPage - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
+
+    private void PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+            ApplyFilters();
+            StateHasChanged();
+        }
+    }
+
+    private void NextPage()
+    {
+        if (currentPage < totalPages)
+        {
+            currentPage++;
+            ApplyFilters();
+            StateHasChanged();
+        }
+    }
+
+
 }
