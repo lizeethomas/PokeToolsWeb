@@ -258,11 +258,7 @@ h1 {
         pointer-events: none;
     }
 
-
-
-
 /* Stats pop-up */
-
 .popup {
     position: absolute;
     background-color: white;
@@ -296,8 +292,263 @@ h1 {
     margin: 10px 0;
 }
 
+/*Type Chart*/
+.team-builder-container {
+    margin: 20px auto;
+    padding: 20px;
+    width: 800px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
 
-/* media screen */
+.team-builder-container-header {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.team-builder-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    text-align: center;
+}
+
+    .team-builder-table th,
+    .team-builder-table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        vertical-align: middle;
+        text-align: center;
+        font-size: 0.95em;
+    }
+
+    .team-builder-table thead th {
+        background-color: #f8f8f8;
+        font-weight: bold;
+    }
+
+    .team-builder-table tbody tr:nth-child(even) {
+        background-color: #f4f4f4;
+    }
+
+.tb-type-header {
+    width: 120px;
+    font-weight: bold;
+    background-color: #eaeaea;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.tb-type-icon {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 2px black;
+}
+
+/* Couleurs par type */
+.tb-type-normal {
+    background-color: #A8A77A;
+}
+
+.tb-type-fire {
+    background-color: #EE8130;
+}
+
+.tb-type-water {
+    background-color: #6390F0;
+}
+
+.tb-type-electric {
+    background-color: #F7D02C;
+}
+
+.tb-type-grass {
+    background-color: #7AC74C;
+}
+
+.tb-type-ice {
+    background-color: #96D9D6;
+    color: black;
+    text-shadow: 1px 1px 1px white;
+}
+
+.tb-type-fighting {
+    background-color: #C22E28;
+}
+
+.tb-type-poison {
+    background-color: #A33EA1;
+}
+
+.tb-type-ground {
+    background-color: #E2BF65;
+    color: black;
+    text-shadow: 1px 1px 1px white;
+}
+
+.tb-type-flying {
+    background-color: #A98FF3;
+}
+
+.tb-type-psychic {
+    background-color: #F95587;
+}
+
+.tb-type-bug {
+    background-color: #A6B91A;
+}
+
+.tb-type-rock {
+    background-color: #B6A136;
+}
+
+.tb-type-ghost {
+    background-color: #735797;
+}
+
+.tb-type-dragon {
+    background-color: #6F35FC;
+}
+
+.tb-type-dark {
+    background-color: #705746;
+}
+
+.tb-type-steel {
+    background-color: #B7B7CE;
+    color: black;
+    text-shadow: 1px 1px 1px white;
+}
+
+.tb-type-fairy {
+    background-color: #D685AD;
+}
+
+
+.slot-pokemon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+    .slot-pokemon img {
+        max-width: 64px;
+        height: auto;
+    }
+
+.tb-pokemon-name {
+    margin-top: 4px;
+    font-size: 0.85em;
+}
+
+.tb-weak-header,
+.tb-resist-header {
+    background-color: #ffeaea;
+    font-weight: bold;
+    width: 60px;
+}
+
+.tb-weak-header {
+    color: #b00000;
+}
+
+.tb-resist-header {
+    color: #00cc00;
+}
+
+.tb-weak-header, .tb-resist-header,
+.team-builder-table td:last-child,
+.team-builder-table td:nth-last-child(2) {
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Type Row */
+.weak-0 {
+    background-color: #ffffff;
+}
+
+.weak-1 {
+    background-color: #ffe0e0;
+}
+
+.weak-2 {
+    background-color: #ffb3b3;
+}
+
+.weak-3 {
+    background-color: #ff8080;
+}
+
+.weak-4 {
+    background-color: #ff4d4d;
+}
+
+.weak-5 {
+    background-color: #ff1a1a;
+}
+
+.weak-6, .weak-max {
+    background-color: #cc0000;
+    color: white;
+}
+
+.resist-0 {
+    background-color: #ffffff;
+}
+.resist-1 {
+    background-color: #e0ffe0;
+}
+
+.resist-2 {
+    background-color: #b3ffb3;
+}
+
+.resist-3 {
+    background-color: #80ff80;
+}
+
+.resist-4 {
+    background-color: #4dff4d;
+}
+
+.resist-5 {
+    background-color: #1aff1a;
+}
+
+.resist-6, .resist-max {
+    background-color: #00cc00;
+    color: white;
+}
+
+.type-x4 {
+    color: #cc0000;
+    font-weight: bold;
+}
+.type-x2 {
+    color: #cc0000;
+}
+.type-x0-5 {
+    color: #00cc00;
+}
+.type-x0-25 {
+    color: #00cc00;
+    font-weight: bold;
+}
+.type-x0 {
+    color: black;
+    font-weight: bold;
+} 
+
+/* Media screen */
 @media screen and (max-width:1024px) {
 
     .card {

@@ -19,12 +19,12 @@ else
         <div class="type-checkboxes">
             @foreach (var type in availableTypes)
             {
-                <label>
+                <label class="type-filter-label">
                     <input type="checkbox"
                            checked="@selectedTypes.Contains(type)"
                     @onchange="e => ToggleTypeFilter(type, (bool)e.Value)"
                            disabled="@(selectedTypes.Count >= 2 && !selectedTypes.Contains(type))" />
-                    @type
+                    <span class="tb-type-icon @GetTypeClass(type)">@type</span>
                 </label>
             }
         </div>
@@ -83,25 +83,17 @@ else
                 </ul>
             </div>
             <div class="chart-panel">
-                @if(availableTypes.Any())
-                {
-                    @foreach(var t in availableTypes)
-                    {
-                        <p>@($"{t} : {0}")</p>
-                    }
-                }
+
             </div>
         </div>
     </div>
 
-    /*
     <div>
         @if(team.Any())
         {
-            <TypeChart pokemon="@(team.First())" defensiveTypeChart="@(teamDefensiveTypeCharts.First())"></TypeChart>
+            <TypeChart pokemons="@(team)" teamDefensiveTypeCharts="@(teamDefensiveTypeCharts)"></TypeChart>
         }
     </div>
-    */
 
     @if (hoveredPokemon != null && showPopup)
     {
@@ -114,8 +106,7 @@ else
     private List<Pokemon> pokemons = new();
     private List<Pokemon> team = new();
 
-    private List<DefensiveTypeChart> teamDefensiveTypeCharts = new();
-    private Dictionary<string, double> teamDefensiveTypeChart = new();
+    private List<Dictionary<string, double>> teamDefensiveTypeCharts = new();
 
     private HashSet<string> selectedTypes = new();
     private List<string> availableTypes = new();
@@ -152,10 +143,7 @@ else
     {
         if(firstRender)
         {
-            availableTypes.ForEach(t =>
-            {
-                teamDefensiveTypeChart.Add(t, 0);
-            });
+            
         }
     }
 
@@ -205,7 +193,12 @@ else
 
     private void OnPokemonDeselected(Pokemon p)
     {
-        team.Remove(p);
+        var index = team.IndexOf(p);
+        if (index >= 0)
+        {
+            team.RemoveAt(index);
+            teamDefensiveTypeCharts.RemoveAt(index);
+        }
         allPokemons.Add(p);
         allPokemons = allPokemons.OrderBy(pkm => pkm.Dex).ToList();
         CancelHover();
@@ -215,14 +208,13 @@ else
 
     private async Task GetDefensiveTypeChart(int dex)
     {
-        teamDefensiveTypeCharts.Add(await Http.GetFromJsonAsync<DefensiveTypeChart>($"https://localhost:7206/api/Type/defense/{dex}") ?? new DefensiveTypeChart());
+        teamDefensiveTypeCharts.Add(await Http.GetFromJsonAsync<Dictionary<string, double>>($"https://localhost:7206/api/Type/defensiveByDex/{dex}") ?? new Dictionary<string, double>());
     }
 
-    private void EvaluateTeamDefensiveTypeChart()
+    string GetTypeClass(string type)
     {
-
+        return $"tb-type-{type.ToLower()}";
     }
-
 
     private void ToggleTypeFilter(string type, bool isChecked)
     {
