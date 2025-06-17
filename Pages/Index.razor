@@ -3,18 +3,20 @@
 @using PokéToolsWeb.Models
 @using PokéToolsWeb.Components
 
-<h1>Pokémon Viewer</h1>
+<div class="header-bar">
+    <h1>PokéTool</h1>
+</div>
 
 @if (pokemons is null)
 {
-    <p>Chargement...</p>
+    <p>Loading...</p>
 }
 else
 {
     <div class="filters">
         <div>
-            <h3>Filtrer par type :</h3>
-            <button @onclick="ClearAllTypes">Tout déselectionner</button>
+            <h3>Filter by Type :</h3>
+            <button @onclick="ClearAllTypes">Unselect all</button>
         </div>
         <div class="type-checkboxes">
             @foreach (var type in availableTypes)
@@ -30,8 +32,8 @@ else
         </div>
         
 
-        <h3>Filtrer par génération :</h3>
-        <button @onclick="SelectAllGens">Tout sélectionner</button>
+        <h3>Filter by Gen:</h3>
+        <button @onclick="SelectAllGens">Select all</button>
         <div class="gen-checkboxes">
             @foreach (var gen in availableGens)
             {
@@ -43,7 +45,24 @@ else
                 </label>
             }
         </div>
-        <button @onclick="ClearAllGens">Tout déselectionner</button>
+        <button @onclick="ClearAllGens">Unselect all</button>
+
+        @if (team.Any())
+        {
+            <h3>Team (@team.Count/6)</h3>
+            <div class="mini-team">
+                @foreach (var p in team)
+                {
+                    <PokemonCard Pokemon="@p"
+                        CancelHover="CancelHover"
+                        OnClick="OnPokemonDeselected"
+                        StartHover="StartHover"
+                        UpdateMousePosition="UpdateMousePosition">
+                    </PokemonCard>
+                }
+            </div>
+            <button @onclick="ClearTeam" class="clear-team-btn">Reset</button>
+        }
     </div>
 
     <div class="page-layout">
@@ -62,37 +81,17 @@ else
                 </div>
             </div>
             <div class="pagination-controls">
-                <button @onclick="PreviousPage" disabled="@(currentPage <= 1)">Page précédente</button>
-                <span>Page @currentPage sur @totalPages</span>
-                <button @onclick="NextPage" disabled="@(currentPage >= totalPages)">Page suivante</button>
+                <button @onclick="PreviousPage" disabled="@(currentPage <= 1)">Previous page</button>
+                <span>Page @currentPage / @totalPages</span>
+                <button @onclick="NextPage" disabled="@(currentPage >= totalPages)">Next page</button>
             </div>
         </div>
         <div class="right-panel">
-            <div class="team-panel">
-                <h3>Team (@($"{team.Count()}/6"))</h3>
-                <ul>
-                    @foreach (var pokemon in team)
-                    {
-                        <PokemonCard Pokemon="@pokemon"
-                            CancelHover="CancelHover"
-                            OnClick="OnPokemonDeselected"
-                            StartHover="StartHover"
-                            UpdateMousePosition="UpdateMousePosition">
-                        </PokemonCard>
-                    }
-                </ul>
-            </div>
-            <div class="chart-panel">
-
-            </div>
+            @if (team.Any())
+            {
+                <TypeChart pokemons="@(team)" teamDefensiveTypeCharts="@(teamDefensiveTypeCharts)"></TypeChart>
+            }
         </div>
-    </div>
-
-    <div>
-        @if(team.Any())
-        {
-            <TypeChart pokemons="@(team)" teamDefensiveTypeCharts="@(teamDefensiveTypeCharts)"></TypeChart>
-        }
     </div>
 
     @if (hoveredPokemon != null && showPopup)
@@ -143,7 +142,7 @@ else
     {
         if(firstRender)
         {
-            
+
         }
     }
 
@@ -204,6 +203,12 @@ else
         CancelHover();
         ApplyFilters();
         StateHasChanged();
+    }
+
+    private void ClearTeam()
+    {
+        team.Clear();
+        teamDefensiveTypeCharts.Clear();
     }
 
     private async Task GetDefensiveTypeChart(int dex)

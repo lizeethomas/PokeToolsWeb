@@ -45,6 +45,21 @@ h1 {
     margin-bottom: 1rem;
 }
 
+.header-bar {
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+    padding: 10px;
+    align-items: center;
+}
+
+.top-team {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 6px;
+}
+
 /* Filters */
 .filters {
     background: #ffffff;
@@ -55,11 +70,12 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    align-items: center;
 }
 
     .filters h3 {
-        margin-top: 0;
-        margin-bottom: 0.75rem;
+        margin-top: 10px;
+        margin-bottom: 5px;
         font-weight: 600;
         color: #34495e;
         flex-basis: 100%;
@@ -112,15 +128,43 @@ h1 {
     accent-color: #3498db;
 }
 
+.mini-team {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    max-width: 720px;
+}
+
+.mini-team .card {
+    background-color: lightblue
+}
+
+.clear-team-btn {
+    margin-top: 0.5rem;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    height: 30px;
+}
+
+    .clear-team-btn:hover {
+        background-color: #c0392b;
+    }
+
 
 /* Page layout */
 .page-layout {
     display: grid;
-    grid-template-columns: auto 615px;
+    grid-template-columns: auto 750px;
     gap: 1%;
     width: 100%;
     margin-right: 30px;
-    grid-template-rows: 720px;
+    grid-template-rows: auto auto;
 }
 
 .left-panel {
@@ -162,7 +206,7 @@ h1 {
             cursor: pointer;
             font-weight: 600;
             transition: background-color 0.3s ease;
-            
+            width: 100px
         }
 
             .left-panel .pagination-controls button:disabled {
@@ -175,55 +219,8 @@ h1 {
             }
 
 .right-panel {
-    display: grid;
-    border: 2px solid #444;
-    border-radius: 10px;
-    background-color: #c8e9ff;
-    padding: 1rem;
-    box-shadow: inset 0 0 8px #34495e;
+    height: 785px;
 }
-
-    .right-panel .team-panel {
-        flex-direction: column;
-        grid-row: 1;
-    }
-
-        .right-panel .team-panel ul {
-            display: flex;
-            height: var(--card-size);
-            flex-wrap: nowrap;
-            gap: 0.5rem;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            justify-content: flex-start;
-        }
-
-            .right-panel .team-panel ul .card {
-                flex: 0 0 auto;
-            }
-
-        .right-panel .team-panel .extra-content {
-            flex-grow: 1;
-            margin-top: 1rem;
-            border-top: 1px solid #888;
-            padding-top: 0.5rem;
-        }
-
-
-        .right-panel .team-panel .in-team {
-            cursor: default;
-            margin: 5px;
-        }
-
-    .right-panel .chart-panel {
-        grid-row: 2;
-        height: auto;
-    }
-
-    .right-panel p {
-        margin: 8px;
-    }
 
 .card-container {
     display: flex;
@@ -294,9 +291,8 @@ h1 {
 
 /*Type Chart*/
 .team-builder-container {
-    margin: 20px auto;
     padding: 20px;
-    width: 800px;
+    width: 700px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -320,7 +316,7 @@ h1 {
     .team-builder-table th,
     .team-builder-table td {
         border: 1px solid #ccc;
-        padding: 8px;
+        padding: 4px;
         vertical-align: middle;
         text-align: center;
         font-size: 0.95em;
@@ -336,7 +332,7 @@ h1 {
     }
 
 .tb-type-header {
-    width: 120px;
+    width: 100px;
     font-weight: bold;
     background-color: #eaeaea;
     text-align: left;
@@ -350,6 +346,10 @@ h1 {
     font-weight: bold;
     color: white;
     text-shadow: 1px 1px 2px black;
+}
+
+td {
+    padding: 0;
 }
 
 /* Couleurs par type */
@@ -561,7 +561,7 @@ h1 {
         }
 
     .right-panel {
-        width: 80px;
+        width: 400px;
     }
 }
 /*767*/
