@@ -21,6 +21,7 @@
         public int? Psycox { get; set; }
 
         public string IconUrl { get; set; }
+        public double Bulk { get; set; }    
 
     }
 }

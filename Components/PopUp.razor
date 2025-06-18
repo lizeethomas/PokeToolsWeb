@@ -11,6 +11,14 @@
     <div class="stat-row"><span>@pokemon.SpAtk</span><ColorBar Value="@pokemon.SpAtk" /></div>
     <div class="stat-row"><span>@pokemon.SpDef</span><ColorBar Value="@pokemon.SpDef" /></div>
     <div class="stat-row"><span>@pokemon.Speed</span><ColorBar Value="@pokemon.Speed" /></div>
+
+    <div class="stat-row">
+        <span>Bulk:</span>
+        <span>@pokemon.Bulk.ToString("0")</span>
+        <span class="bulk-tier-letter @GetBulkTierClass(pokemon.Bulk)">
+            @GetBulkTier(pokemon.Bulk)
+        </span>
+    </div>
 </div>
 
 @code {
@@ -22,4 +30,25 @@
 
     [Parameter]
     public string leftPx { get; set; }
+
+    private string GetBulkTier(double bulk)
+    {
+        return bulk switch
+        {
+            >= 13000 => "S+",
+            >= 11000 => "S",
+            >= 9000 => "A",
+            >= 7000 => "B",
+            >= 5000 => "C",
+            >= 3000 => "D",
+            >= 1000 => "E",
+            _ => "F"
+        };
+    }
+
+    private string GetBulkTierClass(double bulk)
+    {
+        string bulkClass = $"bulk-tier-{GetBulkTier(bulk)}";
+        return bulkClass;
+    }
 }
