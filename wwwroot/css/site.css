@@ -315,6 +315,38 @@ h1 {
     color: #c0392b;
 }
 
+.power-tier-letter {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: white;
+    -webkit-text-stroke: 1px black;
+    text-shadow: 0 0 2px black;
+}
+
+.power-tier-A {
+    color: #2ecc71;
+}
+
+.power-tier-B {
+    color: #27ae60;
+}
+
+.power-tier-C {
+    color: #f1c40f;
+}
+
+.power-tier-D {
+    color: #e67e22;
+}
+
+.power-tier-E {
+    color: #e74c3c;
+}
+
+.power-tier-F {
+    color: #c0392b;
+}
+
 /*Type Chart*/
 .team-builder-container {
     padding: 20px;

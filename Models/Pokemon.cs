@@ -22,6 +22,6 @@
 
         public string IconUrl { get; set; }
         public double Bulk { get; set; }    
-
+        public double Power { get; set; }
     }
 }

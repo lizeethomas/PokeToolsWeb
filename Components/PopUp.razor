@@ -1,6 +1,7 @@
 ﻿@using PokéToolsWeb.Models
 
 <div class="popup" style="top:@topPx; left:@leftPx;">
+
     <div class="stat-row"><span>@("#" + pokemon.Dex)</span><span>@(pokemon.Name)</span></div>
 
     <hr class="separator" />
@@ -19,6 +20,15 @@
             @GetBulkTier(pokemon.Bulk)
         </span>
     </div>
+
+    <div class="stat-row">
+        <span>Power:</span>
+        <span>@pokemon.Power.ToString("0.00")</span>
+        <span class="power-tier-letter @GetPowerTierClass(pokemon.Power)">
+            @GetPowerTier(pokemon.Power)
+        </span>
+    </div>
+
 </div>
 
 @code {
@@ -35,7 +45,6 @@
     {
         return bulk switch
         {
-            >= 13000 => "S+",
             >= 11000 => "S",
             >= 9000 => "A",
             >= 7000 => "B",
@@ -46,9 +55,29 @@
         };
     }
 
+    private string GetPowerTier(double power)
+    {
+        return power switch
+        {
+            >= 1.7 => "S",
+            >= 1.4 => "A",
+            >= 1.1 => "B",
+            >= 0.8 => "C",
+            >= 0.5 => "D",
+            >= 0.2 => "E",
+            _ => "F"
+        };
+    }
+
     private string GetBulkTierClass(double bulk)
     {
         string bulkClass = $"bulk-tier-{GetBulkTier(bulk)}";
         return bulkClass;
+    }
+
+    private string GetPowerTierClass(double bulk)
+    {
+        string powerClass = $"power-tier-{GetPowerTier(bulk)}";
+        return powerClass;
     }
 }
