@@ -24,16 +24,32 @@
         }
     </div>
     <div class="team-infos">
-        @if(Team.Any())
+        @if (Team.Any())
         {
             @foreach (var p in Team)
             {
-                <div>
-                    <p>@p.Name</p>
+                <div class="team-pokemon-info">
+                    <div class="info-name">@p.Name</div>
+                    <div class="info-types">
+                        <span class="tb-type-icon @GetTypeClass(p.Type1)">@p.Type1</span>
+                        @if (!string.IsNullOrEmpty(p.Type2) && p.Type2 != "None")
+                        {
+                            <span class="tb-type-icon @GetTypeClass(p.Type2)">@p.Type2</span>
+                        }
+                    </div>
+                    <div class="team-table">
+                        <span><strong>HP</strong> @p.HP</span>
+                        <span><strong>Atk</strong> @p.Attack</span>
+                        <span><strong>Def</strong> @p.Defense</span>
+                        <span><strong>SpA</strong> @p.SpAtk</span>
+                        <span><strong>SpD</strong> @p.SpDef</span>
+                        <span><strong>Spe</strong> @p.Speed</span>
+                    </div>
                 </div>
             }
         }
     </div>
+
 </div>
 
 
@@ -50,5 +66,18 @@
     private async Task HandleHover(Pokemon p) => await StartHover.InvokeAsync(p);
     private async Task HandleMouse(MouseEventArgs e) => await UpdateMousePosition.InvokeAsync(e);
     private async Task HandleCancel(MouseEventArgs e) => await CancelHover.InvokeAsync(e);
+
+    private string GetTypeClass(string type)
+    {
+        if (string.IsNullOrEmpty(type))
+        {
+            return $"tb-no-type";
+        }
+        else
+        {
+            return $"tb-type-{type.ToLower()}";
+        }
+
+    }
 
 }

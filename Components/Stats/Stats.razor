@@ -23,6 +23,34 @@
     @stat("SpA", pokemon.SpAtk, pokemon.Tiers.SpecialPower, false)
     @stat("SpD", pokemon.SpDef, pokemon.Tiers.SpecialBulk, true)
     @stat("Spe", pokemon.Speed, pokemon.Tiers.SpeedTier, false)
+
+    <hr class="separator" />
+
+    <div class="tier-summary">
+        <div class="tier-line">
+            <span class="tier-label">Bulk</span>
+            <span class="tier-value @($"bulk-tier-{pokemon.Tiers.Bulk}")">@pokemon.Tiers.Bulk</span>
+
+            <span class="tier-label">Att</span>
+            <span class="tier-value @($"bulk-tier-{pokemon.Tiers.PhysicalPower}")">@pokemon.Tiers.PhysicalPower</span>
+        </div>
+
+        <div class="tier-line">
+            <span class="tier-label">Phy.Bulk</span>
+            <span class="tier-value @($"bulk-tier-{pokemon.Tiers.PhysicalBulk}")">@pokemon.Tiers.PhysicalBulk</span>
+
+            <span class="tier-label">Spe.Att</span>
+            <span class="tier-value @($"power-tier-{pokemon.Tiers.SpecialPower}")">@pokemon.Tiers.SpecialPower</span>
+        </div>
+
+        <div class="tier-line">
+            <span class="tier-label">Spe.Bulk</span>
+            <span class="tier-value @($"power-tier-{pokemon.Tiers.SpecialBulk}")">@pokemon.Tiers.SpecialBulk</span>
+
+            <span class="tier-label">Speed</span>
+            <span class="tier-value @($"power-tier-{pokemon.Tiers.SpeedTier}")">@pokemon.Tiers.SpeedTier</span>
+        </div>
+    </div>
 </div>
 
 @code {
@@ -101,29 +129,33 @@
         __builder.CloseComponent();
         __builder.CloseElement();
 
-        __builder.OpenElement(12, "span");
-        var cls = isBulk ? $"bulk-tier-letter bulk-tier-{tier}" : $"power-tier-letter power-tier-{tier}";
-        __builder.AddAttribute(13, "class", cls);
-        __builder.AddContent(14, tier);
-        __builder.CloseElement();
+        /*
+            __builder.OpenElement(12, "span");
+            var cls = isBulk ? $"bulk-tier-letter bulk-tier-{tier}" : $"power-tier-letter power-tier-{tier}";
+            __builder.AddAttribute(13, "class", cls);
+            __builder.AddContent(14, tier);
+            __builder.CloseElement();
+        */
 
         __builder.CloseElement(); 
     };
 }
 
 <style>
-    .popup {
-        position: absolute;
-        background-color: white;
-        border-radius: 12px;
-        border: 1px solid #d1d5db;
-        padding: 16px 20px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        min-width: 260px;
-        font-size: 0.9rem;
-        color: #2c3e50;
-        z-index: 1000;
-    }
+
+.popup {
+    position: fixed;
+    background-color: white;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    padding: 16px 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    min-width: 220px;
+    font-size: 0.9rem;
+    color: #2c3e50;
+    z-index: 9999;
+    pointer-events: auto;
+}
 
     .popup-header {
         position: relative;
@@ -191,6 +223,36 @@
         text-align: right;
         font-size: 1.2rem;
         font-weight: 900;
+        flex-shrink: 0;
+    }
+
+    .tier-summary {
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-top: 8px;
+    }
+
+    .tier-line {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+    }
+
+    .tier-label {
+        width: 70px;
+        text-align: right;
+        color: #555;
+        flex-shrink: 0;
+    }
+
+    .tier-value {
+        width: 20px;
+        text-align: left;
+        font-weight: bold;
         flex-shrink: 0;
     }
 

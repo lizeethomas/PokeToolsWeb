@@ -8,6 +8,11 @@
 
 <div class="header-bar">
     <h1>PokéTool</h1>
+    <input type="text"
+           class="search-box"
+           placeholder="Type a pokemon name..."
+    @bind="SearchText"
+    @bind:event="oninput" />
 </div>
 
 @if (pokemons is null)
@@ -56,10 +61,12 @@ else
 
     </div>
 
-    @if (hoveredPokemon != null && showPopup)
+    <div id="popup-layer">
+    @if (hoveredPokemon is not null)
     {
-        <Stats leftPx="@popupLeftPx" topPx="@popupTopPx" pokemon="@hoveredPokemon" typeClass="GetTypeClass"/>
+            <Stats pokemon="hoveredPokemon" topPx="@popupTopPx" leftPx="@popupLeftPx" typeClass="GetTypeClass" />
     }
+    </div>
 
     @if (team.Any())
     {
@@ -78,6 +85,21 @@ else
     private List<string> availableTypes = new();
     private HashSet<int> selectedGens = new();
     private List<int> availableGens = Enumerable.Range(1, 9).ToList();
+
+    private string searchText = string.Empty;
+    private string SearchText
+    {
+        get => searchText;
+        set
+        {
+            if (searchText != value)
+            {
+                searchText = value;
+                currentPage = 1;
+                ApplyFilters();
+            }
+        }
+    }
 
     private Pokemon? hoveredPokemon;
     private bool showPopup = false;
@@ -265,6 +287,11 @@ else
         else
         {
             filtered = Enumerable.Empty<Pokemon>();
+        }
+
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            filtered = filtered.Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) || p.Nom.Contains(searchText, StringComparison.OrdinalIgnoreCase));
         }
 
         var filteredList = filtered.ToList();

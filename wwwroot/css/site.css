@@ -24,6 +24,16 @@
     color: white;
 }
 
+#popup-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; 
+    z-index: 9999;
+}
+
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
@@ -50,17 +60,18 @@ h1 {
     gap: 50px;
     align-items: flex-start;
     padding: 10px;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.top-team {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 6px;
+.search-box {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    width: 500px;
 }
-
 /* Filters */
-
 .filters {
     display: flex;
     flex-wrap: wrap;
@@ -149,14 +160,13 @@ h1 {
     border: 1px solid #e0e0e0;
     border-radius: 10px;
     background-color: white;
-    height: 100%
+    height: 100%;
 }
 
     .team h3 {
         padding-top: 10px;
         font-weight: 600;
         color: #34495e;
-        flex-basis: 100%;
         display: flex;
         justify-content: center;
     }
@@ -171,54 +181,72 @@ h1 {
     align-items: center;
 }
 
-.empty-slot img {
-    opacity: 0.5;
-}
+    .empty-slot img {
+        opacity: 0.5;
+    }
 
 .mini-team {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.8rem;
     max-width: 720px;
     justify-content: center;
     padding: 1rem;
 }
 
-.mini-team .card {
-    background-color: #eaeaea
-}
+    .mini-team .card {
+        background-color: #f0f5ff;
+    }
 
 .team-infos {
-    padding-top: 10px;
-    color: #34495e;
+    margin-top: 1rem;
     display: flex;
     flex-direction: column;
-    padding: 30px;
+    gap: 0.8rem;
+    font-size: 0.85rem;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 20px;
 }
 
-    .team-infos p {
-        font-weight: 600;
-    }
 
-.clear-team-btn {
-    margin-top: 0.5rem;
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 0.4rem 0.9rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-    height: 30px;
+.team-pokemon-info {
+    background: #f0f5ff;
+    border-radius: 10px;
+    padding: 1rem 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: grid;
+    grid-template-columns: 150px 150px 1fr;
+    align-items: center;
+    gap: 1rem;
 }
 
-    .clear-team-btn:hover {
-        background-color: #c0392b;
+.info-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.info-types {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.team-table {
+    display: grid;
+    grid-template-columns: repeat(3, 6rem);
+    gap: 3px 1px;
+    align-items: center;
+}
+
+    .team-table span {
+        white-space: nowrap;
     }
 
 
-/* Page layout */
+/* Page */
 .page-layout {
     display: grid;
     grid-template-columns: 750px auto;
@@ -295,7 +323,6 @@ h1 {
 
 
 /* Pokemon */
-
 .card {
     padding: 0.3rem;
     width: var(--card-size);
@@ -334,10 +361,14 @@ h1 {
 }
 
 .team-builder-container-header {
-    font-size: 1.5em;
-    font-weight: bold;
+    font-size: 1.2em;
     margin-bottom: 15px;
     text-align: center;
+    user-select: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: #34495e;
+    gap: 0.1rem;
 }
 
 .team-builder-table {
