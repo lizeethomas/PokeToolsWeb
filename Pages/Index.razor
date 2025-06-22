@@ -2,6 +2,9 @@
 @inject HttpClient Http
 @using PokéToolsWeb.Models
 @using PokéToolsWeb.Components
+@using PokéToolsWeb.Components.Stats
+@using PokéToolsWeb.Components.Filters
+@using PokéToolsWeb.Components.Chart
 
 <div class="header-bar">
     <h1>PokéTool</h1>
@@ -14,89 +17,53 @@
 else
 {
     <div class="filters">
-        <div>
-            <h3>Filter by Type :</h3>
-            <button @onclick="ClearAllTypes">Unselect all</button>
-        </div>
-        <div class="type-checkboxes">
-            @foreach (var type in availableTypes)
-            {
-                <label class="type-filter-label">
-                    <input type="checkbox"
-                           checked="@selectedTypes.Contains(type)"
-                    @onchange="e => ToggleTypeFilter(type, (bool)e.Value)"
-                           disabled="@(selectedTypes.Count >= 2 && !selectedTypes.Contains(type))" />
-                    <span class="tb-type-icon @GetTypeClass(type)">@type</span>
-                </label>
-            }
-        </div>
-        
+        <TypeFilter AvailableTypes="availableTypes"
+                    SelectedTypes="selectedTypes"
+                    OnToggleType="@(type => ToggleTypeFilter(type, !selectedTypes.Contains(type)))"
+                    OnClearTypes="ClearAllTypes"
+                    GetTypeClass="GetTypeClass" />
 
-        <h3>Filter by Gen:</h3>
-        <button @onclick="SelectAllGens">Select all</button>
-        <div class="gen-checkboxes">
-            @foreach (var gen in availableGens)
-            {
-                <label>
-                    <input type="checkbox"
-                           checked="@selectedGens.Contains(gen)"
-                    @onchange="e => ToggleGenFilter(gen, (bool)e.Value)" />
-                    Gen @gen
-                </label>
-            }
-        </div>
-        <button @onclick="ClearAllGens">Unselect all</button>
-
-        @if (team.Any())
-        {
-            <h3>Team (@team.Count/6)</h3>
-            <div class="mini-team">
-                @foreach (var p in team)
-                {
-                    <PokemonCard Pokemon="@p"
-                        CancelHover="CancelHover"
-                        OnClick="OnPokemonDeselected"
-                        StartHover="StartHover"
-                        UpdateMousePosition="UpdateMousePosition">
-                    </PokemonCard>
-                }
-            </div>
-            <button @onclick="ClearTeam" class="clear-team-btn">Reset</button>
-        }
+        <GenFilter AvailableGens="availableGens"
+                   SelectedGens="selectedGens"
+                   OnToggleGen="@(gen => ToggleGenFilter(gen, !selectedGens.Contains(gen)))"
+                   OnSelectAll="SelectAllGens"
+                   OnClearAll="ClearAllGens" />
     </div>
 
     <div class="page-layout">
+
         <div class="left-panel">
-            <div class="pokemon-panel">
-                <div class="card-container">
-                    @foreach (var pokemon in pokemons)
-                    {
-                        <PokemonCard Pokemon="@pokemon"
-                            CancelHover="CancelHover"
-                            OnClick="OnPokemonSelected"
-                            StartHover="StartHover"
-                            UpdateMousePosition="UpdateMousePosition">
-                        </PokemonCard>
-                    }
-                </div>
-            </div>
-            <div class="pagination-controls">
-                <button @onclick="PreviousPage" disabled="@(currentPage <= 1)">Previous page</button>
-                <span>Page @currentPage / @totalPages</span>
-                <button @onclick="NextPage" disabled="@(currentPage >= totalPages)">Next page</button>
-            </div>
+            <PokemonTeam Team="team"
+                         OnPokemonDeselected="OnPokemonDeselected"
+                         StartHover="StartHover"
+                         CancelHover="CancelHover"
+                         UpdateMousePosition="UpdateMousePosition" />
         </div>
+
         <div class="right-panel">
-            @if (team.Any())
-            {
-                <TypeChart pokemons="@(team)" teamDefensiveTypeCharts="@(teamDefensiveTypeCharts)"></TypeChart>
-            }
+            <Pokedex Pokemons="pokemons"
+                     CurrentPage="currentPage"
+                     TotalPages="totalPages"
+                     PreviousPage="PreviousPage"
+                     NextPage="NextPage"
+                     OnPokemonSelected="OnPokemonSelected"
+                     StartHover="StartHover"
+                     CancelHover="CancelHover"
+                     UpdateMousePosition="UpdateMousePosition" />
         </div>
+
+
+
     </div>
 
     @if (hoveredPokemon != null && showPopup)
     {
-        <PopUp leftPx="@popupLeftPx" topPx="@popupTopPx" pokemon="@hoveredPokemon"/>
+        <Stats leftPx="@popupLeftPx" topPx="@popupTopPx" pokemon="@hoveredPokemon" typeClass="GetTypeClass"/>
+    }
+
+    @if (team.Any())
+    {
+        <TypeChart pokemons="@(team)" teamDefensiveTypeCharts="@(teamDefensiveTypeCharts)"></TypeChart>
     }
 }
 
@@ -119,7 +86,7 @@ else
     private string popupLeftPx = "0px";
 
     private int currentPage = 1;
-    private const int pageSize = 66; 
+    private const int pageSize = 60; 
     private int totalPages = 1;
 
     protected override async Task OnInitializedAsync()
@@ -218,7 +185,15 @@ else
 
     string GetTypeClass(string type)
     {
-        return $"tb-type-{type.ToLower()}";
+        if(string.IsNullOrEmpty(type))
+        {
+            return $"tb-no-type";
+        } 
+        else
+        {
+            return $"tb-type-{type.ToLower()}";
+        }
+        
     }
 
     private void ToggleTypeFilter(string type, bool isChecked)

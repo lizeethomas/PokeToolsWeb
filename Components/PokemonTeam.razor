@@ -1,0 +1,54 @@
+﻿@using PokéToolsWeb.Models
+
+
+<div class="team">
+    <h3>Team (@(Team.Count().ToString())/6)</h3>
+    <div class="mini-team fixed-team">
+        @for (int i = 0; i < 6; i++)
+        {
+            if (i < Team.Count)
+            {
+                <PokemonCard Pokemon="@Team[i]"
+                             CancelHover="HandleCancel"
+                             OnClick="HandleClick"
+                             StartHover="HandleHover"
+                             UpdateMousePosition="HandleMouse">
+                </PokemonCard>
+            }
+            else
+            {
+                <div class="card empty-slot">
+                    <span><img src="https://tinyurl.com/mrw7z944" /></span>
+                </div>
+            }
+        }
+    </div>
+    <div class="team-infos">
+        @if(Team.Any())
+        {
+            @foreach (var p in Team)
+            {
+                <div>
+                    <p>@p.Name</p>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public List<Pokemon> Team { get; set; } = new();
+    [Parameter] public EventCallback<Pokemon> OnPokemonDeselected { get; set; }
+    [Parameter] public EventCallback<Pokemon> StartHover { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> UpdateMousePosition { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> CancelHover { get; set; }
+
+    private string ImgUrl = "https://tinyurl.com/mrw7z944";
+
+    private async Task HandleClick(Pokemon p) => await OnPokemonDeselected.InvokeAsync(p);
+    private async Task HandleHover(Pokemon p) => await StartHover.InvokeAsync(p);
+    private async Task HandleMouse(MouseEventArgs e) => await UpdateMousePosition.InvokeAsync(e);
+    private async Task HandleCancel(MouseEventArgs e) => await CancelHover.InvokeAsync(e);
+
+}
