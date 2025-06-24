@@ -22,6 +22,7 @@
 else
 {
     <div class="filters">
+
         <TypeFilter AvailableTypes="availableTypes"
                     SelectedTypes="selectedTypes"
                     OnToggleType="@(type => ToggleTypeFilter(type, !selectedTypes.Contains(type)))"
@@ -33,6 +34,7 @@ else
                    OnToggleGen="@(gen => ToggleGenFilter(gen, !selectedGens.Contains(gen)))"
                    OnSelectAll="SelectAllGens"
                    OnClearAll="ClearAllGens" />
+
     </div>
 
     <div class="page-layout">
@@ -57,21 +59,27 @@ else
                      UpdateMousePosition="UpdateMousePosition" />
         </div>
 
-
-
-    </div>
-
-    <div id="popup-layer">
-    @if (hoveredPokemon is not null)
-    {
-            <Stats pokemon="hoveredPokemon" topPx="@popupTopPx" leftPx="@popupLeftPx" typeClass="GetTypeClass" />
-    }
     </div>
 
     @if (team.Any())
     {
-        <TypeChart pokemons="@(team)" teamDefensiveTypeCharts="@(teamDefensiveTypeCharts)"></TypeChart>
+        <TypeChart pokemons="@(team)"
+                   teamDefensiveTypeCharts="@(teamDefensiveTypeCharts)">
+        </TypeChart>
     }
+
+    <div id="popup-layer">
+
+        @if (hoveredPokemon is not null)
+        {
+            <Stats pokemon="hoveredPokemon"
+                   topPx="@popupTopPx"
+                   leftPx="@popupLeftPx"
+                   typeClass="GetTypeClass">
+            </Stats>
+        }
+
+    </div>
 }
 
 @code {
