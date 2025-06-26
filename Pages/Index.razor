@@ -88,6 +88,8 @@ else
     private List<Pokemon> pokemons = new();
     private List<Pokemon> team = new();
 
+    private List<Ability> allAbilities = new();
+
     private List<Dictionary<string, double>> teamDefensiveTypeCharts = new();
 
     private HashSet<string> selectedTypes = new();
@@ -123,6 +125,8 @@ else
     protected override async Task OnInitializedAsync()
     {
         allPokemons = await Http.GetFromJsonAsync<List<Pokemon>>("https://localhost:7206/api/Pokemons") ?? new List<Pokemon>();
+
+        allAbilities = await Http.GetFromJsonAsync<List<Ability>>("https://localhost:7206/api/Abilities") ?? new List<Ability>();
 
         availableTypes = allPokemons
             .SelectMany(p => new[] { p.Type1, p.Type2 })
@@ -181,6 +185,10 @@ else
         {
             allPokemons.Remove(p);
             await GetDefensiveTypeChart(p.Dex);
+            if(p.Abilities.Any(a => a == "levitate"))
+            {
+                teamDefensiveTypeCharts.Last()["Ground"] = 0.0;
+            }
             team.Add(p);
             CancelHover();
             ApplyFilters();

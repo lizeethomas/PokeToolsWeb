@@ -3,10 +3,10 @@
     public class Pokemon
     {
         public int Dex { get; set; }
-        public string Name { get; set; }
-        public string Form { get; set; }
-        public string Type1 { get; set; }
-        public string Type2 { get; set; }
+        public string? Name { get; set; }
+        public string? Form { get; set; }
+        public string? Type1 { get; set; }
+        public string? Type2 { get; set; }
         public int Total { get; set; }
         public int HP { get; set; }
         public int Attack { get; set; }
@@ -20,8 +20,13 @@
         public int? Ether { get; set; }
         public int? Psycox { get; set; }
 
-        public string IconUrl { get; set; }
+        public string? IconUrl { get; set; }
+        public string? PokeApiIdentifier { get; set; }
 
-        public Tiers Tiers { get; set; }
+        public List<string>? Abilities { get; set; }
+        public string? HiddenAbility { get; set; }
+        public int EvolutiveState { get; set; }
+
+        public Tiers? Tiers { get; set; }
     }
 }
