@@ -613,11 +613,11 @@ td {
     color: white;
 }
 
-.type-x4 {
+.type-x4, .type-x3 {
     color: #cc0000;
     font-weight: bold;
 }
-.type-x2 {
+.type-x2, .type-x15 {
     color: #cc0000;
 }
 .type-x0-5 {

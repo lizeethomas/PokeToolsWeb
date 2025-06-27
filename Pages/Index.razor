@@ -184,15 +184,59 @@ else
         if(team.Count() < 6)
         {
             allPokemons.Remove(p);
-            await GetDefensiveTypeChart(p.Dex);
-            if(p.Abilities.Any(a => a == "levitate"))
-            {
-                teamDefensiveTypeCharts.Last()["Ground"] = 0.0;
-            }
+            await GetDefensiveTypeChart(p.PokeApiIdentifier);
+            TalentEffects(p);
             team.Add(p);
             CancelHover();
             ApplyFilters();
             StateHasChanged();
+        }
+    }
+
+    private void TalentEffects(Pokemon p)
+    {
+        List<string> values = p.Abilities;
+        values.Add(p.HiddenAbility);
+
+        if (values.Any(a => a == "levitate" || a == "earth-eater"))
+        {
+            teamDefensiveTypeCharts.Last()["Ground"] = 0.0;
+        }
+        if (values.Any(a => a == "dry-skin" || a == "water-absorb" || a == "storm-drain"))
+        {
+            teamDefensiveTypeCharts.Last()["Water"] = 0.0;
+        }
+        if (values.Any(a => a == "sap-sipper"))
+        {
+            teamDefensiveTypeCharts.Last()["Grass"] = 0.0;
+        }
+        if (values.Any(a => a == "lightning-rod" || a == "volt-absorb"))
+        {
+            teamDefensiveTypeCharts.Last()["Electric"] = 0.0;
+        }
+        if (values.Any(a => a == "wonder-guard"))
+        {
+            var weakTypes = new HashSet<string> { "Fire", "Flying", "Ghost", "Dark", "Rock" };
+
+            foreach (var type in availableTypes)
+            {
+                if (!weakTypes.Contains(type))
+                {
+                    teamDefensiveTypeCharts.Last()[type] = 0.0;
+                }
+            }
+        } 
+        if (values.Any(a => a == "solid-rock" || a == "filter" || a == "prism-armor" ))
+        {
+            teamDefensiveTypeCharts.Last().Keys
+            .Where(k => teamDefensiveTypeCharts.Last()[k] == 2.0)
+            .ToList()
+            .ForEach(k => teamDefensiveTypeCharts.Last()[k] = 1.5);
+
+            teamDefensiveTypeCharts.Last().Keys
+            .Where(k => teamDefensiveTypeCharts.Last()[k] == 4.0)
+            .ToList()
+            .ForEach(k => teamDefensiveTypeCharts.Last()[k] = 3.0);
         }
     }
 
@@ -217,9 +261,9 @@ else
         teamDefensiveTypeCharts.Clear();
     }
 
-    private async Task GetDefensiveTypeChart(int dex)
+    private async Task GetDefensiveTypeChart(string pokeId)
     {
-        teamDefensiveTypeCharts.Add(await Http.GetFromJsonAsync<Dictionary<string, double>>($"https://localhost:7206/api/Type/defensiveByDex/{dex}") ?? new Dictionary<string, double>());
+        teamDefensiveTypeCharts.Add(await Http.GetFromJsonAsync<Dictionary<string, double>>($"https://localhost:7206/api/Type/defensiveById/{pokeId}") ?? new Dictionary<string, double>());
     }
 
     string GetTypeClass(string type)

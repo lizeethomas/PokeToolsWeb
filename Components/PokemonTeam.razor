@@ -37,6 +37,9 @@
                             <span class="tb-type-icon @GetTypeClass(p.Type2)">@p.Type2</span>
                         }
                     </div>
+                    <div class="talents">
+                        @($"{string.Join(", ", p.Abilities)}, {p.HiddenAbility}")
+                    </div>
                     <div class="team-table">
                         <span><strong>HP</strong> @p.HP</span>
                         <span><strong>Atk</strong> @p.Attack</span>
