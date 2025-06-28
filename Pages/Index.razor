@@ -30,11 +30,17 @@ else
                     OnClearTypes="ClearAllTypes"
                     GetTypeClass="GetTypeClass" />
 
+
+        <StatsFilter StatFilters="@statFilters"
+                     StatBounds="@statBounds"
+                     OnRangeChanged="FilterPokemonsByStat" />
+
         <GenFilter AvailableGens="availableGens"
                    SelectedGens="selectedGens"
                    OnToggleGen="@(gen => ToggleGenFilter(gen, !selectedGens.Contains(gen)))"
                    OnSelectAll="SelectAllGens"
                    OnClearAll="ClearAllGens" />
+
 
     </div>
 
@@ -91,6 +97,29 @@ else
     private List<string> availableTypes = new();
     private HashSet<int> selectedGens = new();
     private List<int> availableGens = Enumerable.Range(1, 9).ToList();
+
+
+    private Dictionary<string, (int min, int max)> statFilters = new()
+    {
+        { "Total", (200, 720) },
+        { "HP", (1, 255) },
+        { "Attack", (5, 190) },
+        { "Defense", (5, 230) },
+        { "SpAtk", (10, 194) },
+        { "SpDef", (20, 230) },
+        { "Speed", (5, 200) },
+    };
+
+    private Dictionary<string, (int min, int max)> statBounds = new()
+    {
+        { "Total", (200, 720) },
+        { "HP", (1, 255) },
+        { "Attack", (5, 190) },
+        { "Defense", (5, 230) },
+        { "SpAtk", (10, 194) },
+        { "SpDef", (20, 230) },
+        { "Speed", (5, 200) },
+    };
 
     private string searchText = string.Empty;
     private string SearchText
@@ -309,6 +338,12 @@ else
         ApplyFilters();
     }
 
+    private void FilterPokemonsByStat((string stat, int min, int max) range)
+    {
+        statFilters[range.stat] = (range.min, range.max);
+        ApplyFilters();
+    }
+
     private void ApplyFilters()
     {
         IEnumerable<Pokemon> filtered = allPokemons;
@@ -339,7 +374,25 @@ else
 
         if (!string.IsNullOrWhiteSpace(searchText))
         {
-            filtered = filtered.Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) || p.Nom.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+            filtered = filtered.Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase) 
+            || p.Nom.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+            || p.PokeApiIdentifier.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+            || p.Form.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+        }
+
+        foreach (var (stat, (min, max)) in statFilters)
+        {
+            filtered = stat switch
+            {
+                "Total" => filtered.Where(p => p.Total >= min && p.Total <= max),
+                "HP" => filtered.Where(p => p.HP >= min && p.HP <= max),
+                "Attack" => filtered.Where(p => p.Attack >= min && p.Attack <= max),
+                "Defense" => filtered.Where(p => p.Defense >= min && p.Defense <= max),
+                "SpAtk" => filtered.Where(p => p.SpAtk >= min && p.SpAtk <= max),
+                "SpDef" => filtered.Where(p => p.SpDef >= min && p.SpDef <= max),
+                "Speed" => filtered.Where(p => p.Speed >= min && p.Speed <= max),
+                _ => filtered
+            };
         }
 
         var filteredList = filtered.ToList();

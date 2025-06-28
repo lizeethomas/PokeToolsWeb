@@ -3,17 +3,29 @@
 
 <div class="pokedex">
     <div class="pokemon-panel">
-        <div class="card-container">
-            @foreach (var pokemon in Pokemons)
+        
+            @if(Pokemons.Any())
             {
-                <PokemonCard Pokemon="@pokemon"
-                             CancelHover="CancelHover"
-                             OnClick="OnPokemonSelected"
-                             StartHover="StartHover"
-                             UpdateMousePosition="UpdateMousePosition">
-                </PokemonCard>
+                <div class="card-container">
+                    @foreach (var pokemon in Pokemons)
+                    {
+                        <PokemonCard Pokemon="@pokemon"
+                                     CancelHover="CancelHover"
+                                     OnClick="OnPokemonSelected"
+                                     StartHover="StartHover"
+                                     UpdateMousePosition="UpdateMousePosition">
+                        </PokemonCard>
+                    }
+                </div>
+            } 
+            else
+            {
+                <div class="no-pokemon">
+                    <span>No Pokemon found with that filter !</span>
+                </div>
             }
-        </div>
+
+        
     </div>
 </div>
 
