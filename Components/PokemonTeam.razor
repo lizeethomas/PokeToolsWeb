@@ -3,51 +3,56 @@
 
 <div class="team">
     <h3>Team (@(Team.Count().ToString())/6)</h3>
-    <div class="mini-team fixed-team">
+    <div class="mini-team full-team-preview">
         @for (int i = 0; i < 6; i++)
         {
             if (i < Team.Count)
             {
-                <PokemonCard Pokemon="@Team[i]"
-                             CancelHover="HandleCancel"
-                             OnClick="HandleClick"
-                             StartHover="HandleHover"
-                             UpdateMousePosition="HandleMouse">
-                </PokemonCard>
+                <div class="team-slot">
+                    <PokemonCard Pokemon="@Team[i]"
+                                 CancelHover="HandleCancel"
+                                 OnClick="HandleClick"
+                                 StartHover="HandleHover"
+                                 UpdateMousePosition="HandleMouse">
+                    </PokemonCard>
+
+                    <div class="info-below-card">
+                        <div class="info-name">@Team[i].Name</div>
+
+                        <div class="info-types">
+                            <span class="tb-type-icon @GetTypeClass(Team[i].Type1)">@Team[i].Type1</span>
+                            @if (!string.IsNullOrEmpty(Team[i].Type2) && Team[i].Type2 != "None")
+                            {
+                                <span class="tb-type-icon @GetTypeClass(Team[i].Type2)">@Team[i].Type2</span>
+                            }
+                        </div>
+
+                        <div class="info-talents">
+                            @foreach (var ability in Team[i].Abilities)
+                            {
+                                <span class="talent-badge">@FormatAbilityName(ability)</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(Team[i].HiddenAbility))
+                            {
+                                <span class="talent-badge hidden">@FormatAbilityName(Team[i].HiddenAbility)</span>
+                            }
+                        </div>
+
+                        <div class="team-table">
+                            <span><strong>HP</strong> @Team[i].HP</span>
+                            <span><strong>Atk</strong> @Team[i].Attack</span>
+                            <span><strong>Def</strong> @Team[i].Defense</span>
+                            <span><strong>SpA</strong> @Team[i].SpAtk</span>
+                            <span><strong>SpD</strong> @Team[i].SpDef</span>
+                            <span><strong>Spe</strong> @Team[i].Speed</span>
+                        </div>
+                    </div>
+                </div>
             }
             else
             {
-                <div class="card empty-slot">
+                <div class="team-slot empty-slot">
                     <span><img src="https://tinyurl.com/mrw7z944" /></span>
-                </div>
-            }
-        }
-    </div>
-    <div class="team-infos">
-        @if (Team.Any())
-        {
-            @foreach (var p in Team)
-            {
-                <div class="team-pokemon-info">
-                    <div class="info-name">@p.Name</div>
-                    <div class="info-types">
-                        <span class="tb-type-icon @GetTypeClass(p.Type1)">@p.Type1</span>
-                        @if (!string.IsNullOrEmpty(p.Type2) && p.Type2 != "None")
-                        {
-                            <span class="tb-type-icon @GetTypeClass(p.Type2)">@p.Type2</span>
-                        }
-                    </div>
-                    <div class="talents">
-                        @($"{string.Join(", ", p.Abilities)}, {p.HiddenAbility}")
-                    </div>
-                    <div class="team-table">
-                        <span><strong>HP</strong> @p.HP</span>
-                        <span><strong>Atk</strong> @p.Attack</span>
-                        <span><strong>Def</strong> @p.Defense</span>
-                        <span><strong>SpA</strong> @p.SpAtk</span>
-                        <span><strong>SpD</strong> @p.SpDef</span>
-                        <span><strong>Spe</strong> @p.Speed</span>
-                    </div>
                 </div>
             }
         }
@@ -81,6 +86,13 @@
             return $"tb-type-{type.ToLower()}";
         }
 
+    }
+
+    private string FormatAbilityName(string ability)
+    {
+        if (string.IsNullOrWhiteSpace(ability)) return "";
+        return string.Join(" ", ability.Split('-')
+            .Select(word => char.ToUpper(word[0]) + word[1..]));
     }
 
 }

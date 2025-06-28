@@ -195,8 +195,9 @@ else
 
     private void TalentEffects(Pokemon p)
     {
-        List<string> values = p.Abilities;
-        values.Add(p.HiddenAbility);
+        var values = new List<string>(p.Abilities);
+        if (!string.IsNullOrWhiteSpace(p.HiddenAbility))
+            values.Add(p.HiddenAbility);
 
         if (values.Any(a => a == "levitate" || a == "earth-eater"))
         {
@@ -210,7 +211,7 @@ else
         {
             teamDefensiveTypeCharts.Last()["Grass"] = 0.0;
         }
-        if (values.Any(a => a == "lightning-rod" || a == "volt-absorb"))
+        if (values.Any(a => a == "lightning-rod" || a == "volt-absorb" || a == "motor-drive"))
         {
             teamDefensiveTypeCharts.Last()["Electric"] = 0.0;
         }
