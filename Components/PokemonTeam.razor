@@ -30,11 +30,15 @@
                         <div class="info-talents">
                             @foreach (var ability in Team[i].Abilities)
                             {
-                                <span class="talent-badge">@FormatAbilityName(ability)</span>
-                            }
-                            @if (!string.IsNullOrWhiteSpace(Team[i].HiddenAbility))
-                            {
-                                <span class="talent-badge hidden">@FormatAbilityName(Team[i].HiddenAbility)</span>
+                                var tooltip = ability.Description;
+                                if (ability.IsHidden)
+                                {
+                                    <span class="talent-badge hidden" title="@tooltip">@(ability.Name)</span>
+                                }
+                                else
+                                {
+                                    <span class="talent-badge" title="@tooltip">@(ability.Name)</span>
+                                }
                             }
                         </div>
 
@@ -86,13 +90,6 @@
             return $"tb-type-{type.ToLower()}";
         }
 
-    }
-
-    private string FormatAbilityName(string ability)
-    {
-        if (string.IsNullOrWhiteSpace(ability)) return "";
-        return string.Join(" ", ability.Split('-')
-            .Select(word => char.ToUpper(word[0]) + word[1..]));
     }
 
 }

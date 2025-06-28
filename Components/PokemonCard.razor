@@ -32,10 +32,7 @@
 
     private bool HasResistanceModifyingAbility(Pokemon p)
     {
-        var allAbilities = new List<string>(p.Abilities);
-        if (!string.IsNullOrWhiteSpace(p.HiddenAbility))
-            allAbilities.Add(p.HiddenAbility);
-
+        var allAbilities = p.Abilities.Select(a => a.PokeApiIdentifier).ToList();
         return allAbilities.Any(a => ResistanceModifyingAbilities.Contains(a));
     }
 }

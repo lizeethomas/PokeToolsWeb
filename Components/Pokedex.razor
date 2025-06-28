@@ -15,21 +15,10 @@
             }
         </div>
     </div>
-    <div class="pagination-controls">
-        <button @onclick="PreviousPage" disabled="@(CurrentPage <= 1)">Previous page</button>
-        <span>Page @CurrentPage / @TotalPages</span>
-        <button @onclick="NextPage" disabled="@(CurrentPage >= TotalPages)">Next page</button>
-    </div>
 </div>
 
 @code {
     [Parameter] public List<Pokemon> Pokemons { get; set; } = new();
-
-    [Parameter] public int CurrentPage { get; set; }
-    [Parameter] public int TotalPages { get; set; }
-
-    [Parameter] public EventCallback PreviousPage { get; set; }
-    [Parameter] public EventCallback NextPage { get; set; }
 
     [Parameter] public EventCallback<Pokemon> OnPokemonSelected { get; set; }
     [Parameter] public EventCallback<Pokemon> StartHover { get; set; }

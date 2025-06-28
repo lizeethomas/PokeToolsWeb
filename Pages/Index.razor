@@ -50,10 +50,6 @@ else
 
         <div class="right-panel">
             <Pokedex Pokemons="pokemons"
-                     CurrentPage="currentPage"
-                     TotalPages="totalPages"
-                     PreviousPage="PreviousPage"
-                     NextPage="NextPage"
                      OnPokemonSelected="OnPokemonSelected"
                      StartHover="StartHover"
                      CancelHover="CancelHover"
@@ -81,14 +77,13 @@ else
         }
 
     </div>
+
 }
 
 @code {
     private List<Pokemon> allPokemons = new();
     private List<Pokemon> pokemons = new();
     private List<Pokemon> team = new();
-
-    private List<Ability> allAbilities = new();
 
     private List<Dictionary<string, double>> teamDefensiveTypeCharts = new();
 
@@ -106,7 +101,6 @@ else
             if (searchText != value)
             {
                 searchText = value;
-                currentPage = 1;
                 ApplyFilters();
             }
         }
@@ -118,15 +112,9 @@ else
     private string popupTopPx = "0px";
     private string popupLeftPx = "0px";
 
-    private int currentPage = 1;
-    private const int pageSize = 60; 
-    private int totalPages = 1;
-
     protected override async Task OnInitializedAsync()
     {
         allPokemons = await Http.GetFromJsonAsync<List<Pokemon>>("https://localhost:7206/api/Pokemons") ?? new List<Pokemon>();
-
-        allAbilities = await Http.GetFromJsonAsync<List<Ability>>("https://localhost:7206/api/Abilities") ?? new List<Ability>();
 
         availableTypes = allPokemons
             .SelectMany(p => new[] { p.Type1, p.Type2 })
@@ -195,9 +183,7 @@ else
 
     private void TalentEffects(Pokemon p)
     {
-        var values = new List<string>(p.Abilities);
-        if (!string.IsNullOrWhiteSpace(p.HiddenAbility))
-            values.Add(p.HiddenAbility);
+        List<string> values = p.Abilities.Select(a => a.PokeApiIdentifier).ToList();
 
         if (values.Any(a => a == "levitate" || a == "earth-eater"))
         {
@@ -277,7 +263,7 @@ else
         {
             return $"tb-type-{type.ToLower()}";
         }
-        
+
     }
 
     private void ToggleTypeFilter(string type, bool isChecked)
@@ -357,36 +343,7 @@ else
         }
 
         var filteredList = filtered.ToList();
-
-        totalPages = (int)Math.Ceiling(filteredList.Count / (double)pageSize);
-        if (currentPage > totalPages)
-            currentPage = totalPages > 0 ? totalPages : 1;
-
-        pokemons = filteredList
-            .Skip((currentPage - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
+        pokemons = filteredList;
     }
-
-    private void PreviousPage()
-    {
-        if (currentPage > 1)
-        {
-            currentPage--;
-            ApplyFilters();
-            StateHasChanged();
-        }
-    }
-
-    private void NextPage()
-    {
-        if (currentPage < totalPages)
-        {
-            currentPage++;
-            ApplyFilters();
-            StateHasChanged();
-        }
-    }
-
 
 }

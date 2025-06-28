@@ -190,24 +190,22 @@ h1 {
         justify-content: center;
     }
 
-/* Nouvelle grille : 3 colonnes, 2 lignes */
 .full-team-preview {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 3rem;
     justify-items: center;
-    max-width: 960px;
-    margin: 30px;
+    margin: 20px;
     padding: 1rem;
 }
 
-/* Slot de chaque Pokémon : taille fixe */
 .team-slot {
     width: 100%;
-    max-width: 280px;
-    min-height: 220px;
+    max-width: 200px;
+    height: 280px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     background-color: #f9fbff;
     border-radius: 12px;
@@ -215,11 +213,10 @@ h1 {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
-/* Slot vide = même taille + centrage */
 .empty-slot {
     width: 100%;
     max-width: 280px;
-    min-height: 220px;
+    height: 280px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -233,31 +230,31 @@ h1 {
         height: 48px;
     }
 
-/* Infos sous le sprite */
 .info-below-card {
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
-    align-items: center;
-    text-align: center;
+    justify-content: space-between;
+    flex-grow: 1;
     width: 100%;
 }
 
 .info-name {
+    margin-top: 10px;
     font-size: 0.9rem;
     font-weight: 600;
     color: #2c3e50;
+    text-align: center;
+    margin-bottom: 0.3rem;
 }
 
-/* Types et Talents */
 .info-types,
 .info-talents {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
     justify-content: center;
+    padding: 0.3rem 0;
+    text-align: center;
 }
 
 .tb-type-icon {
@@ -287,109 +284,73 @@ h1 {
         color: #92400e;
     }
 
-/* Stats alignées proprement */
 .team-table {
     display: grid;
     grid-template-columns: repeat(2, auto);
-    gap: 5px 12px;
+    gap: 10px 15px;
     font-size: 0.7rem;
     color: #374151;
     white-space: nowrap;
     justify-content: center;
-}
-
-/* Responsive : 2 colonnes max sur petits écrans */
-@media screen and (max-width: 768px) {
-    .full-team-preview {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .full-team-preview {
-        grid-template-columns: 1fr;
-    }
+    margin-top: auto; 
+    padding-bottom: 5px;
 }
 
 /* Page */
 .page-layout {
-    display: grid;
-    grid-template-columns: 750px auto;
+    display: flex;
+    gap: 20px;
+    height: 800px; 
     width: 100%;
-    grid-template-rows: auto auto;
-    grid-gap: unset;
 }
 
 .left-panel {
-    width: 720px;
+    width: 650px;
+    flex-shrink: 0; 
+    display: flex;
+    flex-direction: column;
 }
 
 .right-panel {
-    width: auto;
+    flex: 1;
+    min-width: 0; 
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
-
 
 /* Pokedex */
 .pokedex {
+    flex: 1;
+    overflow-y: auto;
     border: 1px solid #e0e0e0;
     border-radius: 10px;
     background-color: white;
-    height: 100%;
     display: flex;
     flex-direction: column;
 }
 
 .pokemon-panel {
     overflow-y: auto;
-    width: 100%;
+    width: auto;
     display: flex;
     flex-wrap: wrap;
+    padding: 10px;
 }
+
 .card-container {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-size), auto));
     gap: 1rem;
-    justify-content: flex-start;
-    margin: 20px;
-}
-
-
-.pagination-controls {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 1rem;
-    margin-right: 20px;
-    padding-top: 20px;
-    margin-bottom: 20px;
-    margin-top: auto;
-}
-
-    .pagination-controls button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 0.5rem 1.2rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-            width: 150px
-        }
-
-    .pagination-controls button:disabled {
-        background-color: #a0bcd9;
-        cursor: not-allowed;
-    }
-
-    .pagination-controls button:hover:not(:disabled) {
-        background-color: #2980b9;
+    justify-items: center;
+    width: 100%;
+    padding: 30px;
 }
 
 
 /* Pokemon */
 .card {
-    padding: 0.3rem;
+    padding: 0.2rem;
     width: var(--card-size);
     height: var(--card-size);
     background: #fafafa;
