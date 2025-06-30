@@ -9,11 +9,6 @@
 <div class="header-bar">
     <img src="https://www.pokepedia.fr/images/0/01/Porygon-RFVF.png?20200407174707" />
     <h1><span class="poke">Poké</span><span class="tool">Tool</span></h1>
-    <input type="text"
-           class="search-box"
-           placeholder="Type a pokemon name..."
-    @bind="SearchText"
-    @bind:event="oninput" />
 </div>
 
 @if (pokemons is null)
@@ -40,6 +35,9 @@ else
                    OnToggleGen="@(gen => ToggleGenFilter(gen, !selectedGens.Contains(gen)))"
                    OnSelectAll="SelectAllGens"
                    OnClearAll="ClearAllGens" />
+
+        <SearchBar SearchText="@SearchText" SearchTextChanged="@OnSearchTextChanged" />
+
 
 
     </div>
@@ -155,6 +153,12 @@ else
         selectedGens = new HashSet<int>(availableGens);
 
         ApplyFilters();
+    }
+
+    private Task OnSearchTextChanged(string newText)
+    {
+        SearchText = newText;
+        return Task.CompletedTask;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
