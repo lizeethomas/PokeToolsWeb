@@ -23,6 +23,7 @@
         public string? IconUrl { get; set; }
         public string? PokeApiIdentifier { get; set; }
 
+        public List<Move> Moves { get; set; }
         public List<Ability> Abilities { get; set; }
         public int EvolutiveState { get; set; }
 

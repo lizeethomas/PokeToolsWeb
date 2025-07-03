@@ -18,7 +18,6 @@
 else
 {
     <div class="filters">
-
         <TypeFilter AvailableTypes="availableTypes"
                     SelectedTypes="selectedTypes"
                     OnToggleType="@(type => ToggleTypeFilter(type, !selectedTypes.Contains(type)))"
@@ -37,13 +36,9 @@ else
                    OnClearAll="ClearAllGens" />
 
         <SearchBar SearchText="@SearchText" SearchTextChanged="@OnSearchTextChanged" />
-
-
-
     </div>
 
     <div class="page-layout">
-
         <div class="left-panel">
             <PokemonTeam Team="team"
                          OnPokemonDeselected="OnPokemonDeselected"
@@ -59,7 +54,6 @@ else
                      CancelHover="CancelHover"
                      UpdateMousePosition="UpdateMousePosition" />
         </div>
-
     </div>
 
     @if (team.Any())
@@ -70,16 +64,14 @@ else
     }
 
     <div id="popup-layer">
-
         @if (hoveredPokemon is not null)
         {
-            <Stats pokemon="hoveredPokemon"
+            <StatsHover pokemon="hoveredPokemon"
                    topPx="@popupTopPx"
                    leftPx="@popupLeftPx"
                    typeClass="GetTypeClass">
-            </Stats>
+            </StatsHover>
         }
-
     </div>
 
 }
@@ -141,7 +133,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        allPokemons = await Http.GetFromJsonAsync<List<Pokemon>>("https://localhost:7206/api/Pokemons") ?? new List<Pokemon>();
+        allPokemons = await GetPokemons();
 
         availableTypes = allPokemons
             .SelectMany(p => new[] { p.Type1, p.Type2 })
@@ -153,6 +145,16 @@ else
         selectedGens = new HashSet<int>(availableGens);
 
         ApplyFilters();
+    }
+
+    private async Task<List<Pokemon>> GetPokemons()
+    {
+        return await Http.GetFromJsonAsync<List<Pokemon>>("https://localhost:7206/api/Pokemons") ?? new List<Pokemon>();
+    }
+
+    private async Task<List<Move>> GetMoves(Pokemon p)
+    {
+        return await Http.GetFromJsonAsync<List<Move>>($"https://localhost:7206/api/Pokemon/{p.PokeApiIdentifier}/Moves") ?? new List<Move>();
     }
 
     private Task OnSearchTextChanged(string newText)
@@ -206,6 +208,7 @@ else
         {
             allPokemons.Remove(p);
             await GetDefensiveTypeChart(p.PokeApiIdentifier);
+            p.Moves = await GetMoves(p);
             TalentEffects(p);
             team.Add(p);
             CancelHover();

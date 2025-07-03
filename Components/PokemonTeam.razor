@@ -50,6 +50,25 @@
                             <span><strong>SpD</strong> @Team[i].SpDef</span>
                             <span><strong>Spe</strong> @Team[i].Speed</span>
                         </div>
+
+                        @if (Team[i].Moves is not null && Team[i].Moves.Any())
+                        {
+                            <div class="move-selectors">
+                                @for (int moveSlot = 0; moveSlot < 4; moveSlot++)
+                                {
+                                    <div class="move-dropdown">
+                                        <select>
+                                            @foreach (var move in Team[i].Moves.OrderBy(m => m.Name))
+                                            {
+                                                <option title="@move.Description">
+                                                    @move.Name (@move.Type), @(move.DamageClass), Pow: @(move.Power), Acc: @(move.Accuracy?.ToString() ?? "∞")
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                            </div>
+                        }
                     </div>
                 </div>
             }
@@ -78,6 +97,7 @@
     private async Task HandleHover(Pokemon p) => await StartHover.InvokeAsync(p);
     private async Task HandleMouse(MouseEventArgs e) => await UpdateMousePosition.InvokeAsync(e);
     private async Task HandleCancel(MouseEventArgs e) => await CancelHover.InvokeAsync(e);
+
 
     private string GetTypeClass(string type)
     {
